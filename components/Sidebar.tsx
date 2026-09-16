@@ -74,57 +74,161 @@ function Icon({ name, className }: { name: string; className?: string }) {
   }
 }
 
-export default function Sidebar() {
+export default function Sidebar({
+  isOpen = false,
+  onClose,
+}: {
+  isOpen?: boolean;
+  onClose?: () => void;
+}) {
   const pathname = usePathname();
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col justify-between bg-plum-gradient px-4 py-6 text-cream-50 lg:flex">
-      <div>
-        <div className="mb-8 flex items-center gap-2 px-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-magenta-500 text-sm font-bold text-white shadow-card">
-            TC
+    <>
+      {/* Desktop Sidebar (Sticky, visible lg+) */}
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col justify-between bg-plum-gradient px-4 py-6 text-cream-50 lg:flex">
+        <div>
+          <div className="mb-8 flex items-center gap-2 px-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-magenta-500 text-sm font-bold text-white shadow-card">
+              TC
+            </div>
+            <div className="leading-tight">
+              <p className="font-display text-[15px] font-semibold text-white">Topcoat</p>
+              <p className="text-[11px] tracking-wide text-magenta-200/80">The Nail Experts</p>
+            </div>
           </div>
-          <div className="leading-tight">
-            <p className="font-display text-[15px] font-semibold text-white">Topcoat</p>
-            <p className="text-[11px] tracking-wide text-magenta-200/80">The Nail Experts</p>
-          </div>
+
+          <nav className="space-y-1">
+            {NAV.map((item) => {
+              const active = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
+                    active
+                      ? "bg-white/12 text-white shadow-inner"
+                      : "text-magenta-100/70 hover:bg-white/8 hover:text-white"
+                  }`}
+                >
+                  <Icon
+                    name={item.icon}
+                    className={`h-[18px] w-[18px] shrink-0 ${active ? "text-magenta-300" : "text-magenta-200/60 group-hover:text-magenta-300"}`}
+                  />
+                  <span>{item.label}</span>
+                  {active && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-magenta-400" />}
+                </Link>
+              );
+            })}
+          </nav>
         </div>
 
-        <nav className="space-y-1">
-          {NAV.map((item) => {
-            const active = pathname === item.href;
-            return (
+        <div className="space-y-3 px-2">
+          <Link
+            href="/"
+            className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-magenta-100 transition hover:bg-white/10 hover:text-white"
+          >
+            <svg className="h-4 w-4 text-magenta-300" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+              <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            Landing Page
+          </Link>
+          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <p className="text-[11px] uppercase tracking-wide text-magenta-200/70">Hosting</p>
+            <p className="mt-1 text-xs text-magenta-50/90">Hostinger VPS · Mumbai region</p>
+            <div className="mt-2 flex items-center gap-1.5 text-[11px] text-sage-100">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> All systems normal
+            </div>
+          </div>
+          <p className="px-1 text-[10px] text-magenta-200/50">Demo build · Dev Nexa</p>
+        </div>
+      </aside>
+
+      {/* Mobile Drawer (visible on mobile when isOpen is true) */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex lg:hidden">
+          {/* Backdrop Overlay */}
+          <div
+            className="fixed inset-0 bg-plum-950/70 backdrop-blur-sm transition-opacity"
+            onClick={onClose}
+            aria-hidden="true"
+          />
+
+          {/* Drawer Body */}
+          <aside className="relative z-10 flex h-full w-72 max-w-[85vw] flex-col justify-between bg-plum-gradient px-4 py-6 text-cream-50 shadow-2xl">
+            <div>
+              <div className="mb-6 flex items-center justify-between border-b border-white/10 pb-4 px-2">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-magenta-500 text-sm font-bold text-white shadow-card">
+                    TC
+                  </div>
+                  <div className="leading-tight">
+                    <p className="font-display text-[15px] font-semibold text-white">Topcoat</p>
+                    <p className="text-[11px] tracking-wide text-magenta-200/80">The Nail Experts</p>
+                  </div>
+                </div>
+
+                {/* Close Button */}
+                <button
+                  onClick={onClose}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-magenta-100 transition hover:bg-white/20 hover:text-white"
+                  aria-label="Close menu drawer"
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <nav className="space-y-1">
+                {NAV.map((item) => {
+                  const active = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={onClose}
+                      className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
+                        active
+                          ? "bg-white/12 text-white shadow-inner"
+                          : "text-magenta-100/70 hover:bg-white/8 hover:text-white"
+                      }`}
+                    >
+                      <Icon
+                        name={item.icon}
+                        className={`h-[18px] w-[18px] shrink-0 ${active ? "text-magenta-300" : "text-magenta-200/60 group-hover:text-magenta-300"}`}
+                      />
+                      <span>{item.label}</span>
+                      {active && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-magenta-400" />}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+
+            <div className="space-y-3 px-2 pt-6">
               <Link
-                key={item.href}
-                href={item.href}
-                className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
-                  active
-                    ? "bg-white/12 text-white shadow-inner"
-                    : "text-magenta-100/70 hover:bg-white/8 hover:text-white"
-                }`}
+                href="/"
+                onClick={onClose}
+                className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-magenta-100 transition hover:bg-white/10 hover:text-white"
               >
-                <Icon
-                  name={item.icon}
-                  className={`h-[18px] w-[18px] shrink-0 ${active ? "text-magenta-300" : "text-magenta-200/60 group-hover:text-magenta-300"}`}
-                />
-                <span>{item.label}</span>
-                {active && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-magenta-400" />}
+                <svg className="h-4 w-4 text-magenta-300" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                  <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Landing Page
               </Link>
-            );
-          })}
-        </nav>
-      </div>
-
-      <div className="space-y-3 px-2">
-        <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-          <p className="text-[11px] uppercase tracking-wide text-magenta-200/70">Hosting</p>
-          <p className="mt-1 text-xs text-magenta-50/90">Hostinger VPS · Mumbai region</p>
-          <div className="mt-2 flex items-center gap-1.5 text-[11px] text-sage-100">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> All systems normal
-          </div>
+              <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+                <p className="text-[11px] uppercase tracking-wide text-magenta-200/70">Hosting</p>
+                <p className="mt-1 text-xs text-magenta-50/90">Hostinger VPS · Mumbai region</p>
+                <div className="mt-2 flex items-center gap-1.5 text-[11px] text-sage-100">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> All systems normal
+                </div>
+              </div>
+              <p className="px-1 text-[10px] text-magenta-200/50">Demo build · Dev Nexa</p>
+            </div>
+          </aside>
         </div>
-        <p className="px-1 text-[10px] text-magenta-200/50">Demo build · Dev Nexa</p>
-      </div>
-    </aside>
+      )}
+    </>
   );
 }
