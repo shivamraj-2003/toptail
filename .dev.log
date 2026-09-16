@@ -1,0 +1,13 @@
+
+> topcoat-salon-demo@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.5
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 7.9s
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 535ms (493 modules)
+ GET /dashboard 200 in 714ms
+ GET /dashboard 200 in 48ms
